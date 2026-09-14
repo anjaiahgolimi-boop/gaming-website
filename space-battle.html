@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Battle 🚀</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #080812;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #9b5cff;
+      margin: 15px 0 5px;
+    }
+
+    #score {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    #game {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      max-width: 600px;
+      margin: auto;
+      background: linear-gradient(#080822, #111133);
+      border: 2px solid #292950;
+      overflow: hidden;
+    }
+
+    #player {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 45px;
+    }
+
+    .enemy {
+      position: absolute;
+      font-size: 35px;
+    }
+
+    .bullet {
+      position: absolute;
+      font-size: 22px;
+      color: yellow;
+    }
+
+    #controls {
+      margin-top: 12px;
+    }
+
+    button {
+      background: #702cff;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 25px;
+      margin: 5px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #message {
+      display: none;
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      font-size: 28px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🚀 SPACE BATTLE</h1>
+  <div id="score">Score: 0</div>
+
+  <div id="game">
+    <div id="player">🚀</div>
+    <div id="message">💥 GAME OVER 💥</div>
+  </div>
+
+  <div id="controls">
+    <button onclick="moveLeft()">⬅️ LEFT</button>
+    <button onclick="shoot()">🔥 SHOOT</button>
+    <button onclick="moveRight()">RIGHT ➡️</button>
+  </div>
+
+  <button onclick="restartGame()">🔄 RESTART</button>
+
+  <script>
+    const game = document.getElementById("game");
+    const player = document.getElementById("player");
+    const scoreText = document.getElementById("score");
+    const message = document.getElementById("message");
+
+    let playerX = 50;
+    let score = 0;
+    let gameOver = false;
+
+    function moveLeft() {
+      if (gameOver) return;
+      playerX -= 8;
+
+      if (playerX < 5) {
+        playerX = 5;
+      }
+
+      player.style.left = playerX + "%";
+    }
+
+    function moveRight() {
+      if (gameOver) return;
+      playerX += 8;
+
+      if (playerX > 95) {
+        playerX = 95;
+      }
+
+      player.style.left = playerX + "%";
+    }
+
+    function shoot() {
+      if (gameOver) return;
+
+      const bullet = document.createElement("div");
+      bullet.className = "bullet";
+      bullet.innerHTML = "🔥";
+
+      bullet.style.left = playerX + "%";
+      bullet.style.bottom = "70px";
+
+      game.appendChild(bullet);
+
+      let bulletY = 70;
+
+      const bulletMove = setInterval(() => {
+        bulletY += 5;
+        bullet.style.bottom = bulletY + "px";
+
+        if (bulletY > game.clientHeight) {
+          clearInterval(bulletMove);
+          bullet.remove();
+        }
+
+        document.querySelectorAll(".enemy").forEach(enemy => {
+          const b = bullet.getBoundingClientRect();
+          const e = enemy.getBoundingClientRect();
+
+          if (
+            b.left < e.right &&
+            b.right > e.left &&
+            b.top < e.bottom &&
+            b.bottom > e.top
+
